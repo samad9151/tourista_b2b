@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tourista_b2b/select%20tour.dart';
+import 'package:tourista_b2b/services/apiCalls.dart';
 
 class login extends StatefulWidget {
   const login({Key? key}) : super(key: key);
@@ -15,6 +16,9 @@ class _loginState extends State<login> {
       _ishidden = !_ishidden;
     });
   }
+
+  TextEditingController usernamecon = new TextEditingController();
+  TextEditingController passwordcon = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +50,7 @@ class _loginState extends State<login> {
             Padding(
               padding: const EdgeInsets.only(left: 10.0, right: 10.0),
               child: TextField(
+                controller: usernamecon,
                 decoration: InputDecoration(
                     prefixIcon: Icon(Icons.person),
                     labelText: 'Enter Name',
@@ -55,6 +60,7 @@ class _loginState extends State<login> {
             Padding(
               padding: const EdgeInsets.only(left: 10.0, right: 10.0),
               child: TextField(
+                  controller: passwordcon,
                   decoration: InputDecoration(
                       prefixIcon: Icon(Icons.lock),
                       suffixIcon: IconButton(
@@ -91,12 +97,23 @@ class _loginState extends State<login> {
                       width: 150,
                       height: 50,
                       child: FlatButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => selectTour()),
-                          );
+                        onPressed: () async {
+                          ApiCalls api = new ApiCalls(
+                              loginToken: new LoginToken(token: ""));
+                          //    var username=usernamecon.
+                          var resp = await api.postApiRequest(
+                              "api/User/login", {
+                            "f8996da763b7a969b1": usernamecon.text,
+                            "d74ff0ee8da3b9806b": passwordcon.text
+                          });
+                          print(resp.body);
+                          if (resp.statusCode == 200) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => selectTour()),
+                            );
+                          }
                           // Navigator.push(context, MaterialPageRoute(builder:(context)=>news_feed1()),);
                         },
                         color: Color(0xffa014eb),
